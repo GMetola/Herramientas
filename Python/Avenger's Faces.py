@@ -41,8 +41,8 @@ if __name__ == '__main__':
         if i % 10 == 0:
             end = time.time()
             fps = i/(end-start)
-            print('Current fps: ',int(fps))
-            print('Actual time: ', round(end-start,2), '\n')
+            print('Current fps: ', int(fps))
+            print('Actual time: ', round(end-start, 2), '\n')
 
         if cv2.waitKey(20) & 0xFF == ord('q'):
             break
@@ -51,4 +51,4 @@ if __name__ == '__main__':
     cv2.destroyAllWindows()
 
     print('Number of frames: ', i)
-    print('Average fps: ',i/(end - start))
+    print('Average fps: ', i/(end - start))
