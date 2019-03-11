@@ -15,7 +15,6 @@ def ColorRange(ruta,image):
     # that "3" is for H,S,V
     # it will contain False,True,True if H is out of range and S and V are in range
 
-
     comparo = (hsv_matrix > low_colors) & (hsv_matrix < high_colors)
     # rango_lapiz is a (pixels x pixels) matrix, boolean too.
     # I only want the pixels where all H,S AND V are inside the object range
