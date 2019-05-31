@@ -1,8 +1,11 @@
-def ColorRange(ruta,image):
-    from PIL import Image
-    import numpy as np
+import shutil
+from os import listdir, path, makedirs
+from PIL import Image
+import numpy as np
 
-    origina_frames = Image.open(ruta + '\\' + image.__str__())
+
+def ColorRange(file_path, image):
+    origina_frames = Image.open(file_path)
     hsv_frames = origina_frames.convert('HSV')
 
     hsv_matrix = np.array(hsv_frames)  # matrix 1024x1280x3 en HSV.
@@ -13,7 +16,7 @@ def ColorRange(ruta,image):
 
     # comparo is a matrix of (pixels x pixels x 3)
     # that "3" is for H,S,V
-    # it will contain False,True,True if H is out of range and S and V are in range
+    # For Example: it will contain False,True,True if H is out of range and S and V are in range
 
     comparo = (hsv_matrix > low_colors) & (hsv_matrix < high_colors)
     # rango_lapiz is a (pixels x pixels) matrix, boolean too.
@@ -28,81 +31,49 @@ def ColorRange(ruta,image):
     # returns a matrix of pixels with a boolean depending if that pixel belongs to my object
     return im, rango_lapiz
 
-import shutil
-from os import listdir,path,makedirs
+"""
+# TODO  
+Eliminar pequeños focos de ruido en la imagen resultante: 
+i. Aplicar dos operaciones de ​erosión​ consecutivas utilizando un 
+elemento estructurante cuadrado de tamaño 3x3. 
+ii. Aplicar dos operaciones de ​dilatación​ consecutivas utilizando un 
+elemento estructurante cuadrado de tamaño 3x3. 
+○ Detectar los distintos contornos que aparecen en la imagen y quedarse 
+con aquel que presente mayor área  
+○ Presentar en pantalla el resultado del seguimiento: mínimo círculo que 
+engloba el objeto detectado en rojo, su centroide en verde y la 
+trayectoria del mismo en azul. 
 
-ruta = r'C:\Users\Gabriel\PycharmProjects\lapiz-frames\all_frames'
+ Por último, se proporciona la secuencia de argumentos que deberá soportar el 
+programa presentado. 
+
+python visual_tracking.py --video=./media/lapiz.avi --min_values=29 43 
+126 --max_values=88 255 255  
+ 
+"""
+
+ruta = 'C:/Users/Gabriel/PycharmProjects/lapiz-frames/frames/'
 
 # checking the existence of a folder to save the new images
-if path.exists(ruta+r'\nuevas'):
+if path.exists(ruta+'nuevas'):
     # if it exists, we delete it
-     shutil.rmtree(ruta + r'\nuevas')
+     shutil.rmtree(ruta + 'nuevas')
 # we create it anew
-makedirs(ruta+r'\nuevas')
+makedirs(ruta+'nuevas')
 
 im = []
 rango_lapiz = []  # just in case it could be handly
 for image in listdir(ruta):  # LISTDIR rocks !!
-    [a, b] = ColorRange(ruta,image)
-    im.append(a)
-    rango_lapiz.append(b)
-    file_path = path.join(ruta+r'\nuevas',image.__str__())
-    # __str__() includes file extension!!
-    a.save(file_path)
+    if image.endswith(".jpg"):
+        [a, b] = ColorRange(ruta + image.__str__(), image)
+        im.append(a)
+        rango_lapiz.append(b)
+        # __str__() includes file extension!!
+        file_path = path.join(ruta+'nuevas/'+image.__str__())
+        a.save(file_path)
+    else:
+        continue
 
 # checking:
-print('  imagenes', len(im), '\n', 'rango_lapiz', len(rango_lapiz))
+print('imagenes', len(im))
 
-
-
-"""
-
-
-# pincel=[]
-# for row in range(np.size(rgb_matrix,0)):
-#    for column in range(np.size(rgb_matrix,1)):
-#        if rgb_matrix [row][column][0] < 88:
-#            pincel.append(rgb_matrix [row][column] - low_colors)
-
-# print('hsv_matrix',hsv_matrix.shape)
-# print('pincel',pincel.shape)
-# print(np.size(pincel))
-# print(hsv_matrix[1023][1279])
-# print(rgb_matrix[1023][1279])
-
-
-for row in hsv_array:
-    pixeles = row
-    for element in row:
-        lista_hsv = element
-        for cono in element:
-            lista_cono = cono
-            i+=1
-
-
-print('i',i)
-print(pixeles)
-print('pixeles',lista_cono.shape)
-print('lista_hsv',lista_hsv.shape)
-print('hsv_array',len(hsv_array))
-prueba = lista_hsv[:,[0]]
-pelota_h = np.where(29<prueba)
-
-
-try:
-    hsv_array.append(np.array(hsv_frames[0]))
-except: (len(hsv_array)>1030)
-h,s,v = hsv_array[0].split
-i+=1
-# print(hsv_array[0])
-
-
-# seleccion = np.
-
-# Utilizar colorsys ?????
-
-
-# [image.show() for image in hsv_frames]
-
-####    pencil= [np.where(np.logical_and(hsv_colors[0]>=29, hsv_frames[0]<88))]
-"""
