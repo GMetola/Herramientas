@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse, collections
+import os
 
 
 ap = argparse.ArgumentParser(description='Measure error')
@@ -12,15 +13,23 @@ args = ap.parse_args()
 """
 inference = './results/detection.csv'
 groundtruth ='./gt/groundtruth.csv'
-output_graphs = './output_stats'
+output_graphs = './output_graphs'
 """
+inference = args.inference
+groundtruth = args.groundtruth
+output_graphs = args.output_graphs
 
+if not os.path.exists(output_graphs):
+    os.makedirs(output_graphs)
+else:
+    for file in os.listdir(output_graphs):
+        os.remove(output_graphs + '/' + file)
 
 # no consigo utilizar loadtxt
-ground = np.genfromtxt(args.inference,
+ground = np.genfromtxt(inference,
                     delimiter=",",skip_header=1,
                     dtype = "unicode")
-detection = np.genfromtxt(args.groundtruth,
+detection = np.genfromtxt(groundtruth,
                     delimiter=",",skip_header=1,
                     dtype = "unicode")
 
@@ -40,21 +49,21 @@ for valor in not_errors:
 
 ### Complexity ###
 
-bins = np.array([0, 1, 2, 3, np.max(relation[:,3]) + 1])
-etiquetas = ('Errors', '1', '2', '3', '=>4')
+bins = np.array([0, 1, 2, 3, np.max(relation) + 1])
+etiquetas = ('Errors', '0', '1', '2', '3', '=>4')
 pos_etiquetas = np.arange(len(etiquetas))
 
 Complexity_sort = collections.Counter(np.digitize(relation[:, 3], bins))
 Complexity_sort[0] = num_errors
 Complexity_sort[1] -= Complexity_sort[0]
-
 # Bars unsupported for type(s) 'Counter' --> we convert to ndarray
 Complexity_count = np.zeros(len(Complexity_sort))
+
 for i in np.arange(len(Complexity_sort)):
     Complexity_count[i] = Complexity_sort[i]
 
 # percentage calculation
-Complexity_count *= 100 / num_values
+Complexity_count = Complexity_count * 100 / num_values
 
 # graphic representation
 plt.bar(np.arange(len(Complexity_count)), Complexity_count, color=['k', 'r', 'r', 'r', 'r'])
@@ -63,7 +72,8 @@ plt.yticks(np.arange(0, 120, 20))
 plt.xlabel('Difference between detection and ground')
 plt.ylabel('Percentage of total measures')
 plt.title('Complexity')
-plt.savefig(args.output_graphs+'/Complexity.png')
+plt.ylim([0, 100])
+plt.savefig(output_graphs+'/Complexity.png')
 # to clear current figure and don't affect the following
 plt.gcf().clear()
 
@@ -84,7 +94,7 @@ for i in np.arange(len(Area2D_sort)):
     Area2D_count[i] = Area2D_sort[i]
 
 # percentage calculation
-Area2D_count *= 100 / num_values
+Area2D_count = Area2D_count * 100 / num_values
 
 # graphic representation
 plt.xticks(pos_etiquetas, etiquetas)
@@ -92,7 +102,8 @@ plt.xlabel('Difference between detection and ground')
 plt.ylabel('Percentage of total measures')
 plt.title('Area 2D')
 plt.bar(np.arange(len(Area2D_count)), Area2D_count, color=['k', 'r', 'r', 'r', 'r', 'r', 'r'])
-plt.savefig(args.output_graphs+'/Area 2D.png')
+plt.ylim([0, 100])
+plt.savefig(output_graphs+'/Area 2D.png')
 # to clear current figure and don't affect the following
 plt.gcf().clear()
 
@@ -111,7 +122,7 @@ for i in np.arange(len(Area3D_sort)):
     Area3D_count[i] = Area3D_sort[i]
 
 # percentage calculation
-Area3D_count *= 100 / num_values
+Area3D_count = Area3D_count * 100 / num_values
 
 # graphic representation
 plt.xticks(pos_etiquetas, etiquetas)
@@ -119,6 +130,7 @@ plt.xlabel('Difference between detection and ground')
 plt.ylabel('Percentage of total measures')
 plt.title('Area 3D')
 plt.bar(np.arange(len(Area3D_count)), Area3D_count, color=['k', 'r', 'r', 'r', 'r', 'r', 'r'])
-plt.savefig(args.output_graphs+'/Area 3D.png')
+plt.ylim([0, 100])
+plt.savefig(output_graphs+'/Area 3D.png')
 # to clear current figure and don't affect the following
 plt.gcf().clear()
