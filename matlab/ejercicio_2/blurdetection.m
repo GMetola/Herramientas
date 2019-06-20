@@ -1,6 +1,7 @@
 function [] = blurdetection(in)
 close all
 direct = dir(fullfile(in));
+direct = direct(~[direct.isdir]);
 
 for i = 3:length(direct)
     im = imread(fullfile(direct(i).folder, direct(i).name));
