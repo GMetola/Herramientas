@@ -3,21 +3,22 @@ import matplotlib.pyplot as plt
 import argparse, collections
 import os
 
-
+"""
 ap = argparse.ArgumentParser(description='Measure error')
 ap.add_argument('-inf', '--inference', required=True, metavar='', help= 'path of inference')
 ap.add_argument('-gt', '--groundtruth', required=True, metavar='', help= 'path of groundtruth')
 ap.add_argument('-out','--output_graphs',required=True, metavar='', help='path to save graphs')
 args = ap.parse_args()
 
-"""
-inference = './results/detection.csv'
-groundtruth ='./gt/groundtruth.csv'
-output_graphs = './output_graphs'
-"""
 inference = args.inference
 groundtruth = args.groundtruth
 output_graphs = args.output_graphs
+
+"""
+inference = './detection.csv'
+groundtruth ='./groundtruth.csv'
+output_graphs = './output_graphs'
+
 
 if not os.path.exists(output_graphs):
     os.makedirs(output_graphs)
